@@ -1,21 +1,40 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { Redirect } from "react-router-dom";
 import './App.css';
 
-class App extends Component {
+export default class App extends Component {
+  constructor(){
+    super();
+    this.state = {redirectToSearch: false,movies:[]}
+  }
+
+  fetchMovies = (searchText) => {
+    fetch(`https://api.themoviedb.org/3/search/movie?api_key=72771bf8eeb4afe10715f33b981f2a23&query=${searchText}`)
+    .then(data => data.json())
+    .then(data => {
+        this.setState({movies: data.results})
+    });
+}
+
+  search = () => {
+    this.setState({redirectToSearch: true})
+  }
+
   render() {
+    const {redirectToSearch} = this.state;
+    if (redirectToSearch){
+      return <Redirect to = '/search'/>
+    }
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+      <div className="app-root">
+      <div className="text-center body">
+        <h1>Movie Search</h1>
+        <p>Search for any movie!</p>
+        <button onClick={this.search} className="btn">Search for a Movie!</button>
+      </div>
+
       </div>
     );
   }
 }
 
-export default App;
